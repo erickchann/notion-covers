@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Generate beautiful Notion cover images at 1500×600 pixels. Customize backgrounds, add text and SVG icons, and export as PNG.">
+  <title>Notion Cover Generator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Top Bar -->
+  <header id="app-header">
+    <div class="header-brand">
+      <h1>Notion Cover Generator</h1>
+    </div>
+    <div class="header-meta">
+      <span class="size-badge">1500 × 600 px</span>
+      <button id="btn-export" class="btn btn-primary" title="Export as PNG">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Export PNG
+      </button>
+    </div>
+  </header>
+
+  <main id="app-main">
+    <!-- Sidebar Controls -->
+    <aside id="sidebar">
+      <!-- Background Section -->
+      <section class="panel" id="panel-background">
+        <h2 class="panel-title">
+          Background
+        </h2>
+        <div class="panel-body">
+          <div class="tab-group" id="bg-tabs">
+            <button class="tab active" data-tab="color">Color</button>
+            <button class="tab" data-tab="gradient">Gradient</button>
+            <button class="tab" data-tab="image">Image</button>
+          </div>
+
+          <!-- Color Tab -->
+          <div class="tab-content active" id="tab-color">
+            <div class="form-group">
+              <label>Background Color</label>
+              <div class="color-input-row">
+                <input type="color" id="bg-color" value="#ffffff">
+                <input type="text" id="bg-color-hex" class="input-hex" value="#ffffff" maxlength="7">
+              </div>
+            </div>
+          </div>
+
+          <!-- Gradient Tab -->
+          <div class="tab-content" id="tab-gradient">
+            <div class="form-group">
+              <label>Start Color</label>
+              <div class="color-input-row">
+                <input type="color" id="grad-start" value="#e9ecef">
+                <input type="text" id="grad-start-hex" class="input-hex" value="#e9ecef" maxlength="7">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>End Color</label>
+              <div class="color-input-row">
+                <input type="color" id="grad-end" value="#dee2e6">
+                <input type="text" id="grad-end-hex" class="input-hex" value="#dee2e6" maxlength="7">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Direction</label>
+              <select id="grad-direction" class="select-input">
+                <option value="to right">Left → Right</option>
+                <option value="to left">Right → Left</option>
+                <option value="to bottom">Top → Bottom</option>
+                <option value="to top">Bottom → Top</option>
+                <option value="to bottom right">Diagonal ↘</option>
+                <option value="to top right">Diagonal ↗</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Image Tab -->
+          <div class="tab-content" id="tab-image">
+            <div class="form-group">
+              <label>Upload Image</label>
+              <div class="file-drop-zone" id="image-drop-zone">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                <span>Drop image here or <em>browse</em></span>
+                <input type="file" id="bg-image-input" accept="image/*" hidden>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Image Fit</label>
+              <select id="bg-image-fit" class="select-input">
+                <option value="cover">Cover (fill)</option>
+                <option value="contain">Contain (fit)</option>
+                <option value="stretch">Stretch</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Overlay Color</label>
+              <div class="color-input-row">
+                <input type="color" id="overlay-color" value="#ffffff">
+                <input type="text" id="overlay-color-hex" class="input-hex" value="#ffffff" maxlength="7">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Overlay Opacity <span id="overlay-opacity-val" class="range-val">40%</span></label>
+              <input type="range" id="overlay-opacity" class="range-input" min="0" max="100" value="40">
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Content Layers Section -->
+      <section class="panel" id="panel-layers">
+        <h2 class="panel-title">
+          Content Layers
+        </h2>
+        <div class="panel-body">
+          <div class="layer-actions">
+            <button id="btn-add-text" class="btn btn-sm btn-ghost">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
+              Add Text
+            </button>
+            <button id="btn-add-svg" class="btn btn-sm btn-ghost">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 4.5v9L12 21l-9-4.5v-9L12 3z"/></svg>
+              Add SVG
+            </button>
+          </div>
+          <div id="layers-list" class="layers-list">
+            <!-- Layer items injected here -->
+          </div>
+        </div>
+      </section>
+
+      <!-- Selected Layer Properties -->
+      <section class="panel" id="panel-properties" style="display:none;">
+        <h2 class="panel-title">
+          <span id="prop-title">Properties</span>
+        </h2>
+        <div class="panel-body" id="properties-body">
+          <!-- Dynamic properties injected here -->
+        </div>
+      </section>
+    </aside>
+
+    <!-- Canvas Preview -->
+    <div id="canvas-viewport">
+      <div id="canvas-wrapper">
+        <canvas id="cover-canvas" width="1500" height="600"></canvas>
+      </div>
+      <div class="canvas-footer">
+        <span id="zoom-label">Fit</span>
+      </div>
+    </div>
+  </main>
+
+  <!-- Toast container -->
+  <div id="toast-container"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
