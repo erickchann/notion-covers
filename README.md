@@ -1,5 +1,7 @@
 # Notion Cover Generator
 
+✨ **[Try the Live Demo](https://erickchann.github.io/notion-covers/)** ✨
+
 A lightweight, zero-dependency web tool for creating Notion cover images at the exact recommended resolution (1500×600).
 
 ## Overview
