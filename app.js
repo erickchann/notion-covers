@@ -47,6 +47,12 @@
   const canvas = document.getElementById('cover-canvas');
   const ctx = canvas.getContext('2d');
 
+  // Increase internal resolution by 2x for high-quality export (3000x1200)
+  const EXPORT_SCALE = 2;
+  canvas.width = CANVAS_W * EXPORT_SCALE;
+  canvas.height = CANVAS_H * EXPORT_SCALE;
+  ctx.scale(EXPORT_SCALE, EXPORT_SCALE);
+
   // Background controls
   const bgTabs = document.getElementById('bg-tabs');
   const tabColor = document.getElementById('tab-color');
@@ -216,7 +222,7 @@
       id: ++layerIdCounter,
       type: 'svg',
       visible: true,
-      svgCode: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>`,
+      svgCode: '',
       color: '#000000',
       size: 120,
       align: 'center',
@@ -756,6 +762,7 @@
   const svgCache = new Map();
 
   function drawSvgLayer(layer) {
+    if (!layer.svgCode || !layer.svgCode.trim()) return;
     const size = layer.size;
     // Inject color into SVG — replace currentColor and stroke/fill values
     let svgStr = layer.svgCode.trim();
